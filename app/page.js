@@ -1,6 +1,20 @@
+"use client"
 import Link from "next/link";
+import { useRouter } from 'next/navigation'
+import { useEffect } from "react"
+import { useSession } from "next-auth/react";
 
 export default function Home() {
+
+      const { data: session } = useSession();
+      const router = useRouter()
+  
+      useEffect(() => {
+          if (session) {
+              router.push("/Dashboard")
+          }
+      }, [session, router])
+
   return (
     <div>
       <section className="flex flex-wrap">
