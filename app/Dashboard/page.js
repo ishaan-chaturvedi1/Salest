@@ -12,7 +12,7 @@ const Page = () => {
     const [sales, setSales] = useState([]);
     const [name, setName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [emailAddress, setEmailAddress] = useState("");
+    const [meterLoad, setMeterLoad] = useState("");
     const [address, setAddress] = useState("");
     const [popup, setPopup] = useState(false);
     const [editingId, setEditingId] = useState(null); // NEW: to track editing
@@ -61,7 +61,7 @@ const Page = () => {
             id: editingId || uuidv4(),
             name,
             phoneNumber,
-            email: emailAddress,
+            meterLoadInKw: meterLoad,
             address,
             saleOf: session.user.email.split("@")[0],
             isUpdate: Boolean(editingId)
@@ -105,7 +105,7 @@ const Page = () => {
         setName(item.name);
         setAddress(item.address);
         setPhoneNumber(item.phoneNumber);
-        setEmailAddress(item.email);
+        setMeterLoad(item.meterLoad);
         setPopup(true);
     }
 
@@ -115,7 +115,7 @@ const Page = () => {
     function resetForm() {
         setName("");
         setPhoneNumber("");
-        setEmailAddress("");
+        setMeterLoad("");
         setAddress("");
         setEditingId(null);
         setPopup(false);
@@ -144,7 +144,7 @@ const Page = () => {
                     <div className="form flex flex-wrap items-center justify-center max-w-[80vw] md:max-w-[65vw] gap-4">
                         <input value={name} onChange={(e) => setName(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's full name" />
                         <input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's phone number" />
-                        <input value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's email address" />
+                        <input value={meterLoad} onChange={(e) => setMeterLoad(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's meter load" />
                         <input value={address} onChange={(e) => setAddress(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's address" />
 
                         <button
@@ -158,10 +158,10 @@ const Page = () => {
             </div>
 
             {/* TOP BAR */}
-            <div className="top flex justify-center items-center p-4 w-full gap-3">
+            <div className="top flex justify-center items-center p-4 w-full gap-3"> 
                 <input className="p-2 text-lg border border-2 border-black rounded-lg" type="text" placeholder="Search clients" />
 
-                <button onClick={() => setPopup(true)} className="text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5 flex items-center gap-1">
+                <button onClick={() => setPopup(true)} className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5 flex items-center gap-1">
                     <img src="/add.svg" alt="add" />Add sale
                 </button>
 
@@ -170,7 +170,7 @@ const Page = () => {
                         {session?.user?.email}
                     </div>
 
-                    <button onClick={() => signOut()} className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5">
+                    <button onClick={() => signOut()} className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-full text-sm px-5 py-2.5">
                         Sign Out
                     </button>
                 </div>
@@ -189,7 +189,7 @@ const Page = () => {
                                 <h3 className="font-bold text-xl">{item.name}</h3>
                                 <div className="flex flex-wrap gap-2 text-lg text-gray">
                                     <p>{item.phoneNumber}</p>
-                                    <p>• {item.email}</p>
+                                    <p>• {item.meterLoadInKw}Kw</p>
                                     <p>• {item.address}</p>
                                 </div>
                             </div>
