@@ -8,6 +8,7 @@ const SaleSchema = new Schema({
     meterLoadInKw: {type:Number, required:true},
     saleOf: {type:String, required: true},
     id:{type:String, required:true},
+    remarks: {type:String, required:true},
     createdAt: {type:Date, default: Date.now},
     updatedAt: {type:Date, default: Date.now}
 })

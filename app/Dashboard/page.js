@@ -12,10 +12,11 @@ const Page = () => {
     const [sales, setSales] = useState([]);
     const [name, setName] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [meterLoad, setMeterLoad] = useState("");
+    const [meterLoad, setMeterLoad] = useState(0);
     const [address, setAddress] = useState("");
     const [popup, setPopup] = useState(false);
-    const [editingId, setEditingId] = useState(null); // NEW: to track editing
+    const [editingId, setEditingId] = useState(null);
+    const [remarks, setRemarks] = useState("");
 
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -64,7 +65,8 @@ const Page = () => {
             meterLoadInKw: meterLoad,
             address,
             saleOf: session.user.email.split("@")[0],
-            isUpdate: Boolean(editingId)
+            isUpdate: Boolean(editingId),
+            remarks
         };
 
         const res = await fetch("/api/Sale", {
@@ -105,8 +107,10 @@ const Page = () => {
         setName(item.name);
         setAddress(item.address);
         setPhoneNumber(item.phoneNumber);
-        setMeterLoad(item.meterLoad);
+        setMeterLoad(item.meterLoadInKw);
         setPopup(true);
+        setRemarks(item.remarks)
+        deleteSale(item.id)
     }
 
     // -------------------------------------------
@@ -115,10 +119,11 @@ const Page = () => {
     function resetForm() {
         setName("");
         setPhoneNumber("");
-        setMeterLoad("");
+        setMeterLoad(0);
         setAddress("");
         setEditingId(null);
         setPopup(false);
+        setRemarks("");
     }
 
     // -------------------------------------------
@@ -144,11 +149,11 @@ const Page = () => {
                     <div className="form flex flex-wrap items-center justify-center max-w-[80vw] md:max-w-[65vw] gap-4">
                         <input value={name} onChange={(e) => setName(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's full name" />
                         <input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's phone number" />
-                        <input value={meterLoad} onChange={(e) => setMeterLoad(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's meter load" />
+                        <input value={meterLoad} onChange={(e) => setMeterLoad(Number(e.target.value))} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's meter load" />
                         <input value={address} onChange={(e) => setAddress(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's address" />
-
+                        <input value={remarks} onChange={(e) => setRemarks(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Remarks" />
                         <button
-                            className="text-white bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5"
+                            className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5"
                             onClick={saveSale}
                         >
                             {editingId ? "Update" : "Add"}
@@ -158,15 +163,15 @@ const Page = () => {
             </div>
 
             {/* TOP BAR */}
-            <div className="top flex justify-center items-center p-4 w-full gap-3"> 
+            <div className="top flex justify-center items-center gap-2 p-2 md:p-4 w-full md:gap-3"> 
                 <input className="p-2 text-lg border border-2 border-black rounded-lg" type="text" placeholder="Search clients" />
 
                 <button onClick={() => setPopup(true)} className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5 flex items-center gap-1">
                     <img src="/add.svg" alt="add" />Add sale
                 </button>
 
-                <div className="flex justify-center items-center gap-3 absolute right-4">
-                    <div className="text-white bg-blue-700 rounded-full text-sm px-6 py-2.5">
+                <div className="flex justify-center items-center gap-3 md:absolute md:right-4">
+                    <div className="text-white bg-blue-700 hidden md:block rounded-full text-sm px-6 py-2.5">
                         {session?.user?.email}
                     </div>
 
@@ -190,7 +195,7 @@ const Page = () => {
                                 <div className="flex flex-wrap gap-2 text-lg text-gray">
                                     <p>{item.phoneNumber}</p>
                                     <p>• {item.meterLoadInKw}Kw</p>
-                                    <p>• {item.address}</p>
+                                    <p>• Remarks - {item.remarks}</p>
                                 </div>
                             </div>
 
