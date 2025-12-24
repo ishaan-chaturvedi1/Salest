@@ -47,9 +47,10 @@ const Page = () => {
     }
 
     function openClientDetails(client) {
-        setClientPopup(true)
         setSelectedClient(client)
+        setClientPopup(true)
     }
+
 
     async function loadAppointments() {
         const res = await fetch("/api/getAppointments");
@@ -126,7 +127,7 @@ const Page = () => {
         setEditId(id)
     }
 
-    async function deleteSaleWithoutToast(id){
+    async function deleteSaleWithoutToast(id) {
         const res = await fetch("/api/delete", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -261,21 +262,35 @@ const Page = () => {
         return new Date().toISOString().split("T")[0]
     }
 
+    function isToday(dateStr) {
+        if (!dateStr) return false
+
+        const d = new Date(dateStr)
+        const today = new Date()
+
+        return (
+            d.getFullYear() === today.getFullYear() &&
+            d.getMonth() === today.getMonth() &&
+            d.getDate() === today.getDate()
+        )
+    }
+
+
 
     let filteredAppointments = appointments.filter(item => {
         if (hasDatePassed(item.date)) return false
 
         if (appointmentSort === "today") {
-            return item.date === getTodayYYYYMMDD()
+            return isToday(item.date)
         }
 
-        return true // "all"
+        return true
     })
-
 
     if (appointmentSort === "next3") {
         filteredAppointments = getNext3DaysAppointments(filteredAppointments)
     }
+
 
 
 
@@ -397,13 +412,14 @@ const Page = () => {
 
                     {selectedClient && (
                         <div className="bg-white rounded-lg p-6 flex flex-col gap-3 m-3 text-lg min-w-[80%]">
-                            <p>Name - {sales.find((item) => item.name == selectedClient).name}</p>
-                            <p>Phone - {sales.find((item) => item.name == selectedClient).phoneNumber}</p>
-                            <p>Address - {sales.find((item) => item.name == selectedClient).address}</p>
-                            <p>Meter load - {sales.find((item) => item.name == selectedClient).meterLoadInKw}Kw</p>
-                            <p>Remarks - {sales.find((item) => item.name == selectedClient).remarks}</p>
+                            <p>Name - {selectedClient.name}</p>
+                            <p>Phone - {selectedClient.phoneNumber}</p>
+                            <p>Address - {selectedClient.address}</p>
+                            <p>Meter load - {selectedClient.meterLoadInKw} Kw</p>
+                            <p>Remarks - {selectedClient.remarks}</p>
                         </div>
                     )}
+
                 </div>
             </div>
 
@@ -427,14 +443,14 @@ const Page = () => {
                         <input value={meterLoad} onChange={(e) => setMeterLoad(Number(e.target.value))} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's meter load" />
                         <input value={address} onChange={(e) => setAddress(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Client's address" />
                         <input value={remarks} onChange={(e) => setRemarks(e.target.value)} className="bg-white rounded-lg p-2 text-lg w-full" placeholder="Remarks" />
-                        {editId==""? <button
+                        {editId == "" ? <button
                             className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5"
                             onClick={saveSale}
                         >
                             Add
-                        </button>: <button
+                        </button> : <button
                             className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5"
-                            onClick={() => {deleteSaleWithoutToast(editId),saveSale(), setEditId("")}}
+                            onClick={() => { deleteSaleWithoutToast(editId), saveSale(), setEditId("") }}
                         >
                             Edit
                         </button>}
@@ -488,7 +504,7 @@ const Page = () => {
                     {displayedSales.map((item) => (
                         <div className="bg-white m-5 flex flex-wrap justify-between items-center rounded-xl p-6" key={item.id}>
                             <div>
-                                <h3 onClick={(e) => { openClientDetails(e.target.innerHTML) }} className="font-bold cursor-pointer text-xl">{item.name}</h3>
+                                <h3 onClick={(e) => { openClientDetails(item) }} className="font-bold cursor-pointer text-xl">{item.name}</h3>
                                 <div className="flex flex-wrap gap-2 text-lg text-gray">
                                     <p>{item.phoneNumber}</p>
                                     <p>• {item.meterLoadInKw}Kw</p>
