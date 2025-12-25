@@ -278,13 +278,19 @@ const Page = () => {
 
 
     let filteredAppointments = appointments.filter(item => {
-        if (hasDatePassed(item.date)) return false
+        const isPast = hasDatePassed(item.date)
+
+        if (appointmentSort === "previous") {
+            return isPast
+        }
+
+        if (isPast) return false
 
         if (appointmentSort === "today") {
             return isToday(item.date)
         }
 
-        return true
+        return true // "all"
     })
 
     if (appointmentSort === "next3") {
@@ -292,6 +298,11 @@ const Page = () => {
     }
 
 
+    function edit2(id) {
+        saveSale()
+        deleteSaleWithoutToast(id)
+        setEditId("")
+    }
 
 
     return (
@@ -354,7 +365,16 @@ const Page = () => {
                         alt="close"
                     />
 
-                    <div className="flex gap-2 absolute right-20 top-5">
+                    <div className="flex gap-2 text-xs absolute right-20 top-5">
+                        <input
+                            id="previousOption"
+                            type="radio"
+                            name="sortAppointments"
+                            value="previous"
+                            checked={appointmentSort === "previous"}
+                            onChange={() => setAppointmentSort("previous")}
+                        />
+                        <label htmlFor="previousOption">Previous</label>
                         <input
                             id="allOption"
                             type="radio"
@@ -450,7 +470,7 @@ const Page = () => {
                             Add
                         </button> : <button
                             className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 rounded-lg text-sm px-5 py-2.5"
-                            onClick={() => { deleteSaleWithoutToast(editId), saveSale(), setEditId("") }}
+                            onClick={() => { edit2(editId) }}
                         >
                             Edit
                         </button>}
