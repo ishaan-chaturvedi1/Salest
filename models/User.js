@@ -8,7 +8,8 @@ const UserSchema = new Schema({
     createdAt: {type:Date, default: Date.now},
     updatedAt: {type:Date, default: Date.now},
     profilePic: {type:String},
-    coverPic: {type:String}
+    coverPic: {type:String},
+    clientSerialNumber: {type:Number, default:1}
 })
 
 export default mongoose.models.User ||  model("User", UserSchema);

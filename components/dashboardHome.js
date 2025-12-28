@@ -51,6 +51,12 @@ const DashboardHome = () => {
         setClientPopup(true)
     }
 
+    async function getSerialNumber(){
+        let res = await fetch("/api/getSaleSerialNumber",  {method: "GET", headers:{"Content-Type": "application/json"}})
+        let json = await res.json()
+        return Number(json.data)
+    }
+
 
     async function loadAppointments() {
         const res = await fetch("/api/getAppointments");
@@ -88,7 +94,8 @@ const DashboardHome = () => {
             address,
             saleOf: session.user.email.split("@")[0],
             isUpdate: Boolean(editingId),
-            remarks
+            remarks,
+            sn: await getSerialNumber()
         };
 
         const res = await fetch("/api/Sale", {
@@ -438,6 +445,7 @@ const DashboardHome = () => {
                             <p>Address - {selectedClient.address}</p>
                             <p>Meter load - {selectedClient.meterLoadInKw} Kw</p>
                             <p>Remarks - {selectedClient.remarks}</p>
+                            <p>Created at - {selectedClient.createdAt.split("T")[0]}</p>
                         </div>
                     )}
 
@@ -541,6 +549,7 @@ const DashboardHome = () => {
                                     <p>{item.phoneNumber}</p>
                                     <p>• {item.meterLoadInKw}Kw</p>
                                     <p>• Remarks - {item.remarks}</p>
+                                    <p>• Sn - {item.sn}</p>
                                 </div>
                             </div>
 
