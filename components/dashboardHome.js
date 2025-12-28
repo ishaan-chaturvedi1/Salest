@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useRef, useState, useEffect, useEffectEvent } from "react"
+import { useRef, useState, useEffect } from "react"
 import { v4 as uuidv4 } from "uuid"
 
 const DashboardHome = () => {
@@ -51,8 +51,8 @@ const DashboardHome = () => {
         setClientPopup(true)
     }
 
-    async function getSerialNumber(){
-        let res = await fetch("/api/getSaleSerialNumber",  {method: "GET", headers:{"Content-Type": "application/json"}})
+    async function getSerialNumber() {
+        let res = await fetch("/api/getSaleSerialNumber", { method: "GET", headers: { "Content-Type": "application/json" } })
         let json = await res.json()
         return Number(json.data)
     }
@@ -231,16 +231,13 @@ const DashboardHome = () => {
 
     useEffect(() => {
         function handlekeydown(e) {
-            if (e.key == "Escape") {
-                resetForm()
-            }
+            if (e.key === "Escape") resetForm()
         }
 
         window.addEventListener("keydown", handlekeydown)
-        return () => {
-            window.removeEventListener("keydown", handlekeydown)
-        }
-    })
+        return () => window.removeEventListener("keydown", handlekeydown)
+    }, []);
+
 
     const displayedSales = search
         ? [
@@ -310,7 +307,6 @@ const DashboardHome = () => {
         deleteSaleWithoutToast(id)
         setEditId("")
     }
-
 
     return (
         <div className="min-h-[100vh] ml-14 w-full relative bg-[#f3f3f6]">
@@ -415,7 +411,7 @@ const DashboardHome = () => {
                         Appointments
                     </h2>
 
-                    {filteredAppointments.length<1?<p>No appointments to display</p>:filteredAppointments.map((item) => {
+                    {filteredAppointments.length < 1 ? <p>No appointments to display</p> : filteredAppointments.map((item) => {
                         return < div key={item.id} className="bg-white m-5 my-2 flex flex-col justify-center w-full items-center rounded-xl p-6" >
                             <h3 className="font-bold text-xl">{item.name} • {item.date}</h3>
                             <p className="text-lg text-gray">{item.remarks}</p>
@@ -445,7 +441,13 @@ const DashboardHome = () => {
                             <p>Address - {selectedClient.address}</p>
                             <p>Meter load - {selectedClient.meterLoadInKw} Kw</p>
                             <p>Remarks - {selectedClient.remarks}</p>
-                            <p>Created at - {selectedClient.createdAt.split("T")[0]}</p>
+                            <p>
+                                Created at -{" "}
+                                {selectedClient?.createdAt
+                                    ? selectedClient.createdAt.split("T")[0]
+                                    : "—"}
+                            </p>
+
                         </div>
                     )}
 
@@ -453,10 +455,10 @@ const DashboardHome = () => {
 
 
                     {filteredAppointments.map((item) => {
-                        return item.name==selectedClient.name&&< div key={item.id} className="bg-white m-5 my-2 flex flex-col justify-center w-full items-center rounded-xl p-6" >
+                        return item.name == selectedClient.name && < div key={item.id} className="bg-white m-5 my-2 flex flex-col justify-center w-full items-center rounded-xl p-6" >
                             <h3 className="font-bold text-xl">{item.name} • {item.date}</h3>
                             <p className="text-lg text-gray">{item.remarks}</p>
-                        </div> 
+                        </div>
                     })}
 
                 </div>
@@ -577,3 +579,4 @@ const DashboardHome = () => {
 };
 
 export default DashboardHome;
+export const dynamic = "force-dynamic";
